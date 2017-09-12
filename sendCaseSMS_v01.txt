@@ -1,0 +1,32 @@
+public class sendCaseSMS {
+
+   @Future(callout = true)
+   public static void callSMSService(Set<ID> caseIDs)
+   {
+    List<Case> newCases = [Select Id, ContactId, ContactMobile, CaseNumber, Subject from Case Where ID in :caseIDs] ;
+    for (Case c : newCases){
+
+         String account = '<Insert Your Twilio Account ID Here>';
+         String token = '<Insert Your Twilio Token Here>';
+         TwilioRestClient client = new TwilioRestClient(account, token);
+         
+         Map<String,String> params = new Map<String,String> {
+             'To'   => c.ContactMobile,
+             'From' => '<Insert Your Twilio Phone Number Here>',
+             'Body' => 'Case No.: ' + c.CaseNumber + ' has been logged for ' + c.Subject
+         };
+
+         TwilioSMS sms = client.getAccount().getSMSMessages().create(params);
+         System.Debug('TwilioSMS ' + sms) ;
+         Task newTask = new Task();
+         newTask.WhatId = c.id;
+         newTask.WhoId = c.ContactId;
+         newTask.Subject = 'Sent Case Creation SMS';
+         newTask.priority= 'Normal' ;
+         newTask.status = 'Completed';
+         newTask.description = string.valueOf(sms) ;
+         newTask.ActivityDate = System.today() ;
+         insert newtask;
+   }
+  }
+}

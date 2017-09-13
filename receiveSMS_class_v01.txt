@@ -1,0 +1,33 @@
+@RestResource(urlMapping='/receiveSMS/*')
+global class receiveSMS {
+    @HttpGet
+    global static String saveSMS() {
+       RestRequest req = RestContext.request;
+       Map<String, String> smsParams = req.params ;
+ 
+       String fromMobile ;
+       String msgBody ;
+       
+        if (smsParams.containsKey('From')){
+           fromMobile = smsParams.get('From') ;
+        }
+ 
+        if (smsParams.containsKey('Body')){
+           msgBody = smsParams.get('Body') ;
+        }
+
+            
+     Task newTask = new Task();
+     newTask.WhatId = '5009000001jb611';
+     newTask.WhoId = '00390000002TjEn' ;
+     newTask.Subject = 'SMS Received';
+     newTask.priority= 'Normal' ;
+     newTask.status = 'Completed';
+     newTask.description = msgBody ;
+     newTask.ActivityDate = System.today() ;
+     insert newtask;
+
+     System.Debug('Incoming SMS Format: ' + req) ;    
+     return 'Success' ;   
+    }
+}

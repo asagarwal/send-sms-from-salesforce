@@ -8,7 +8,7 @@ public class sendCaseSMS {
     for (Case c : newCases){
 
          // Replace the Account & Token below with your Twilio Account & Token IDs
-         // In an actual implementation, this values should be stored in custom settings/metadata and not
+         // In an actual implementation, these values should be stored in custom settings/metadata and not
          // hardcoded in the class itself
          String account = '<Insert Your Twilio Account ID Here>';
          String token = '<Insert Your Twilio Token Here>';

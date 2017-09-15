@@ -1,3 +1,4 @@
+// Class to send SMS from Salesforce using Twilio Helper Libraries
 public class sendCaseSMS {
 
    @Future(callout = true)
@@ -6,18 +7,23 @@ public class sendCaseSMS {
     List<Case> newCases = [Select Id, ContactId, ContactMobile, CaseNumber, Subject from Case Where ID in :caseIDs] ;
     for (Case c : newCases){
 
+         // Replace the Account & Token below with your Twilio Account & Token IDs
+         // In an actual implementation, this values should be stored in custom settings/metadata and not
+         // hardcoded in the class itself
          String account = '<Insert Your Twilio Account ID Here>';
          String token = '<Insert Your Twilio Token Here>';
          TwilioRestClient client = new TwilioRestClient(account, token);
          
          Map<String,String> params = new Map<String,String> {
              'To'   => c.ContactMobile,
-             'From' => '<Insert Your Twilio Phone Number Here>',
+             'From' => '<Insert Your Twilio Phone Number Here>',                // Replace with the number given by Twilio
              'Body' => 'Case No.: ' + c.CaseNumber + ' has been logged for ' + c.Subject
          };
 
          TwilioSMS sms = client.getAccount().getSMSMessages().create(params);
          System.Debug('TwilioSMS ' + sms) ;
+         
+         // Store the SMS as an activity on Case record. For simplicity sake, this is not bulkified
          Task newTask = new Task();
          newTask.WhatId = c.id;
          newTask.WhoId = c.ContactId;
